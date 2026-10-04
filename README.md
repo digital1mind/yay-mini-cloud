@@ -45,3 +45,36 @@ Run in PowerShell:
 
 ```powershell
 kubectl --context=docker-desktop -n default port-forward service/yay-mini-cloud 8082:8081
+```
+
+Open http://localhost:8082 and keep the terminal running.
+Press Ctrl+C to stop forwarding.
+
+## Inspect the app
+
+Run in PowerShell:
+
+```powershell
+kubectl --context=docker-desktop -n default get nodes
+kubectl --context=docker-desktop -n default get deployment,pods,service
+kubectl --context=docker-desktop -n default describe deployment yay-mini-cloud
+kubectl --context=docker-desktop -n default logs deployment/yay-mini-cloud --tail=30
+```
+
+## Current limitations
+
+- Fresh-cluster installation instructions are still in progress.
+- imagePullPolicy: Never requires the image on each node that runs the app.
+- The Deployment requires ConfigMap yay-settings and Secret yay-credentials.
+- The Secret requires DB_USERNAME and DB_PASSWORD keys.
+- Credentials are not stored in this repository.
+- No database integration is demonstrated.
+- Environment variables do not automatically modify the static HTML.
+- The webpage's status badge is static text.
+- Local replicas share one laptop and do not provide machine-level redundancy.
+
+## Next steps
+
+- Document and test installation in a fresh local cluster.
+- Add repeatable troubleshooting exercises.
+- Add CI/CD, observability, and infrastructure automation.
