@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yay-mini-cloud
+  namespace: default
+  labels:
+    app: yay-mini-cloud
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+  selector:
+    matchLabels:
+      app: yay-mini-cloud
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: yay-mini-cloud
+    spec:
+      containers:
+        - name: yay-mini-cloud
+          image: yay-mini-cloud:v1
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: yay-settings
+                  key: APP_NAME
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: yay-settings
+                  key: ENVIRONMENT
+            - name: THEME_COLOR
+              valueFrom:
+                configMapKeyRef:
+                  name: yay-settings
+                  key: THEME_COLOR
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: yay-credentials
+                  key: DB_PASSWORD
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: yay-credentials
+                  key: DB_USERNAME
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yay-mini-cloud
+  namespace: default
+  labels:
+    app: yay-mini-cloud
+spec:
+  type: LoadBalancer
+  selector:
+    app: yay-mini-cloud
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 80
+      protocol: TCP
