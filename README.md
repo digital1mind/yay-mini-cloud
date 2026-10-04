@@ -78,3 +78,24 @@ kubectl --context=docker-desktop -n default logs deployment/yay-mini-cloud --tai
 - Document and test installation in a fresh local cluster.
 - Add repeatable troubleshooting exercises.
 - Add CI/CD, observability, and infrastructure automation.
+
+## Separate-namespace deployment verification
+
+Successfully deployed the application into `yay-verify` using temporary
+copies of the repository manifests:
+
+- Changed the namespace from `default` to `yay-verify`.
+- Changed the test Service from LoadBalancer to ClusterIP.
+- Created `yay-credentials` with dummy lab values.
+- Confirmed `yay-mini-cloud:v1` was present on both Kubernetes nodes.
+- Confirmed the deployment rolled out with 3/3 ready replicas.
+- Verified the website in a browser through this command:
+
+```bash
+kubectl --context=docker-desktop -n yay-verify port-forward service/yay-mini-cloud 8083:8081
+```
+
+The website was accessible at http://localhost:8083.
+
+This test used the existing Docker Desktop cluster and preloaded image.
+Building and loading the image into a fresh cluster remains to be tested.
