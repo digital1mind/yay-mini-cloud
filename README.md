@@ -79,7 +79,18 @@ kubectl --context=docker-desktop -n default logs deployment/yay-mini-cloud --tai
 - Add repeatable troubleshooting exercises.
 - Add CI/CD, observability, and infrastructure automation.
 
-## Separate-namespace deployment verification
+## Chapter 01 — Separate-namespace deployment verification
+
+**Date:** 2026-10-05 (Philippine time)  
+**Status:** Completed on the existing cluster
+
+**Goal:** Verify that the saved manifests can deploy another working
+instance of the application.
+
+**Topics practiced:** WSL integration troubleshooting, namespaces,
+ConfigMaps, Secret references, node image availability, rollout checks,
+and port forwarding.
+
 
 Successfully deployed the application into `yay-verify` using temporary
 copies of the repository manifests:
